@@ -31,6 +31,18 @@ def create(project_data: ProjectCreate, db: Session = Depends(get_db)):
 def list_projects(db: Session = Depends(get_db)):
     return get_projects(db)
 
+@router.get("/{project_id}", response_model=ProjectResponse)
+def get_detail(
+    project_id: int,
+    db: Session = Depends(get_db),
+):
+    project = get_project_by_id(db, project_id)
+
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    return project
+
 @router.put("/{project_id}", response_model=ProjectResponse)
 def update(
     project_id: int,

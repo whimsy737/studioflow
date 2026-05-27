@@ -11,6 +11,40 @@ type Props = {
 export default async function ProjectDetailPage({ params }: Props) {
   const { id } = await params;
   const project = await fetchProject(Number(id));
+  
+  const deadlineStatus = (() => {
+    if (!project.deadline) {
+        return {
+        label: "No deadline",
+        className: "text-zinc-500",
+        };
+    }
+
+    const now = new Date();
+    const deadline = new Date(project.deadline);
+    const diffMs = deadline.getTime() - now.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+
+    if (diffMs < 0) {
+        return {
+        label: "Overdue",
+        className: "text-red-400",
+        };
+    }
+
+    if (diffHours <= 24) {
+        return {
+        label: "Due soon",
+        className: "text-yellow-400",
+        };
+    }
+
+    return {
+        label: "On track",
+        className: "text-green-400",
+    };
+  })();
+
 
   return (
     <main className="min-h-screen p-8">
@@ -43,6 +77,10 @@ export default async function ProjectDetailPage({ params }: Props) {
           <div>
             <dt className="text-gray-500">Deadline</dt>
             <dd>
+              <span className={`font-semibold ${deadlineStatus.className}`}>
+                {deadlineStatus.label}
+              </span>
+              <br />
               {project.deadline
                 ? new Date(project.deadline).toLocaleString()
                 : "未設定"}

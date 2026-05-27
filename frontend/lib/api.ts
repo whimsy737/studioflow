@@ -24,6 +24,7 @@ export async function fetchProjects(): Promise<Project[]> {
 export async function createProject(data: {
   title: string;
   description: string;
+  deadline: string | null;
 }) {
   const response = await fetch(`${API_BASE_URL}/projects`, {
     method: "POST",
@@ -33,7 +34,6 @@ export async function createProject(data: {
     body: JSON.stringify({
       ...data,
       status: "todo",
-      deadline: null,
     }),
   });
 

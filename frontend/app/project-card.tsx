@@ -11,13 +11,47 @@ type Props = {
 };
 
 export default function ProjectCard({ project }: Props) {
+
+  const deadlineStatus = (() => {
+    if (!project.deadline) {
+        return {
+        label: "No deadline",
+        className: "text-zinc-500",
+        };
+    }
+
+    const now = new Date();
+    const deadline = new Date(project.deadline);
+    const diffMs = deadline.getTime() - now.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+
+    if (diffMs < 0) {
+        return {
+        label: "Overdue",
+        className: "text-red-400",
+        };
+    }
+
+    if (diffHours <= 24) {
+        return {
+        label: "Due soon",
+        className: "text-yellow-400",
+        };
+    }
+
+    return {
+        label: "On track",
+        className: "text-green-400",
+    };
+  })();
+
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+    <div className="min-w-0 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
 
       <div className="flex items-start justify-between gap-4">
 
         <div>
-          <h3 className="text-lg font-bold">
+          <h3 className="break-words text-lg font-bold">
             {project.title}
           </h3>
 
@@ -47,6 +81,23 @@ export default function ProjectCard({ project }: Props) {
 
         <p className="mt-1 text-sm text-zinc-300">
           {new Date(project.created_at).toLocaleString()}
+        </p>
+        
+      </div>
+
+      <div className="mt-3">
+        <p className="text-xs text-zinc-500">
+            Deadline:
+        </p>
+
+        <p className={`mt-1 text-xs font-semibold ${deadlineStatus.className}`}>
+            {deadlineStatus.label}
+        </p>
+
+        <p className="mt-1 text-sm text-zinc-300">
+            {project.deadline
+            ? new Date(project.deadline).toLocaleString()
+            : "未設定"}
         </p>
       </div>
 

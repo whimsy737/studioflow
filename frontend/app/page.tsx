@@ -28,9 +28,25 @@ export default async function Home() {
     (project) => project.status === "done"
   );
 
+  const now = new Date();
+
+  const overdueProjects = projects.filter((project) => {
+    if (!project.deadline) return false;
+    return new Date(project.deadline).getTime() < now.getTime();
+  });
+
+  const dueSoonProjects = projects.filter((project) => {
+    if (!project.deadline) return false;
+
+    const diffMs = new Date(project.deadline).getTime() - now.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+
+    return diffMs >= 0 && diffHours <= 24;
+  });
+
   return (
     <main className="min-h-screen bg-zinc-950 p-8 text-white">
-      <div className="mx-auto max-w-6xl">
+      <div className="w-full">
 
         <header className="flex items-center justify-between">
           <div>
@@ -43,14 +59,25 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
-            <p className="text-sm text-zinc-400">
-              Total Projects
-            </p>
+          <div className="flex gap-3">
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
+              <p className="text-sm text-zinc-400">Total Projects</p>
+              <p className="text-2xl font-bold">{projects.length}</p>
+            </div>
 
-            <p className="text-2xl font-bold">
-              {projects.length}
-            </p>
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
+              <p className="text-sm text-zinc-400">Overdue</p>
+              <p className="text-2xl font-bold text-red-400">
+                {overdueProjects.length}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
+              <p className="text-sm text-zinc-400">Due Soon</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                {dueSoonProjects.length}
+              </p>
+            </div>
           </div>
         </header>
 
@@ -82,62 +109,69 @@ export default async function Home() {
           ) : (
             <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
 
-              {projects.map((project) => (
-                <div
-                  key={project.id}
-                  className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 transition hover:border-zinc-700"
-                >
-                  <div className="flex items-start justify-between gap-4">
+              <div className="mt-6 grid w-full gap-6 lg:grid-cols-2 2xl:grid-cols-4">
 
-                    <div>
-                      <h3 className="text-lg font-bold">
-                        {project.title}
-                      </h3>
+                <div>
+                  <h3 className="mb-4 text-lg font-bold text-zinc-400">
+                    TODO
+                  </h3>
 
-                      <div className="mt-3">
-                        <StatusBadge status={project.status} />
-                      </div>
-                    </div>
-
-                    <Link
-                      href={`/projects/${project.id}`}
-                      className="text-sm text-blue-400 hover:underline"
-                    >
-                      Detail
-                    </Link>
-                  </div>
-
-                  {project.description && (
-                    <p className="mt-5 text-sm leading-relaxed text-zinc-300">
-                      {project.description}
-                    </p>
-                  )}
-
-                  <div className="mt-6 border-t border-zinc-800 pt-4">
-                    <p className="text-xs text-zinc-500">
-                      Created:
-                    </p>
-
-                    <p className="mt-1 text-sm text-zinc-300">
-                      {new Date(project.created_at).toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div className="mt-6 space-y-3">
-                    <EditProjectForm
-                      projectId={project.id}
-                      initialTitle={project.title}
-                      initialDescription={project.description}
-                      initialStatus={project.status}
-                    />
-
-                    <DeleteProjectButton
-                      projectId={project.id}
-                    />
+                  <div className="space-y-4">
+                    {todoProjects.map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                      />
+                    ))}
                   </div>
                 </div>
-              ))}
 
+                <div>
+                  <h3 className="mb-4 text-lg font-bold text-blue-400">
+                    DOING
+                  </h3>
+
+                  <div className="space-y-4">
+                    {doingProjects.map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-4 text-lg font-bold text-yellow-400">
+                    REVIEW
+                  </h3>
+
+                  <div className="space-y-4">
+                    {reviewProjects.map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-4 text-lg font-bold text-green-400">
+                    DONE
+                  </h3>
+
+                  <div className="space-y-4">
+                    {doneProjects.map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+              </div>
             </div>
           )}
         </section>

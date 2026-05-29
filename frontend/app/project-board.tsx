@@ -20,20 +20,50 @@ export default function ProjectBoard({ projects }: Props) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  const [sortBy, setSortBy] = useState("created_at");
+
   const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
+    const result = projects.filter((project) => {
       const keyword = search.toLowerCase();
 
       const matchesSearch =
         project.title.toLowerCase().includes(keyword) ||
-        (project.description ?? "").toLowerCase().includes(keyword);
+        (project.description ?? "")
+          .toLowerCase()
+          .includes(keyword);
 
       const matchesStatus =
-        statusFilter === "all" || project.status === statusFilter;
+        statusFilter === "all" ||
+        project.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-  }, [projects, search, statusFilter]);
+
+    result.sort((a, b) => {
+      if (sortBy === "title") {
+        return a.title.localeCompare(b.title);
+      }
+
+      if (sortBy === "deadline") {
+        const aTime = a.deadline
+          ? new Date(a.deadline).getTime()
+          : Number.MAX_SAFE_INTEGER;
+
+        const bTime = b.deadline
+          ? new Date(b.deadline).getTime()
+          : Number.MAX_SAFE_INTEGER;
+
+        return aTime - bTime;
+      }
+
+      return (
+        new Date(b.created_at).getTime() -
+        new Date(a.created_at).getTime()
+      );
+    });
+
+    return result;
+  }, [projects, search, statusFilter, sortBy]);
 
   return (
     <section className="mt-10">
@@ -64,6 +94,17 @@ export default function ProjectBoard({ projects }: Props) {
             <option value="review">Review</option>
             <option value="done">Done</option>
           </select>
+
+          <select
+            className="rounded border border-zinc-700 bg-zinc-900 p-2 text-sm text-white"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            >
+            <option value="created_at">Created At</option>
+            <option value="deadline">Deadline</option>
+            <option value="title">Title</option>
+          </select>
+
         </div>
       </div>
 

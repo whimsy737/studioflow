@@ -39,6 +39,11 @@ export default function EditProjectForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (!title.trim()) {
+      alert("Project title is required");
+      return;
+    }
+
     await updateProject(projectId, {
       title,
       description,

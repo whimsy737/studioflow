@@ -7,9 +7,17 @@ export default function ProjectForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!title.trim()) {
+      setError("Project title is required");
+      return;
+    }
+
+    setError("");
 
     await createProject({
       title,
@@ -33,6 +41,12 @@ export default function ProjectForm() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+
+        {error && (
+          <p className="mt-1 text-sm text-red-400">
+            {error}
+          </p>
+        )}
       </div>
 
       <div>
@@ -42,6 +56,9 @@ export default function ProjectForm() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+      </div>
+
+      <div>
 
         <input
           type="datetime-local"

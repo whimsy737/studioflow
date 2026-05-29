@@ -64,6 +64,7 @@ export async function updateProject(
     title: string;
     description: string;
     status: string;
+    deadline: string | null;
   }
 ) {
   const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
@@ -71,10 +72,7 @@ export async function updateProject(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      ...data,
-      deadline: null,
-    }),
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {

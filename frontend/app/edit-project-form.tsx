@@ -8,6 +8,7 @@ type Props = {
   initialTitle: string;
   initialDescription: string | null;
   initialStatus: string;
+  initialDeadline: string | null;
 };
 
 export default function EditProjectForm({
@@ -15,6 +16,7 @@ export default function EditProjectForm({
   initialTitle,
   initialDescription,
   initialStatus,
+  initialDeadline,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -26,6 +28,14 @@ export default function EditProjectForm({
 
   const [status, setStatus] = useState(initialStatus);
 
+  const [deadline, setDeadline] = useState(
+    initialDeadline
+      ? new Date(initialDeadline)
+          .toISOString()
+          .slice(0, 16)
+      : ""
+  );
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -33,6 +43,7 @@ export default function EditProjectForm({
       title,
       description,
       status,
+      deadline: deadline || null,
     });
 
     setIsEditing(false);
@@ -75,6 +86,13 @@ export default function EditProjectForm({
         <option value="review">review</option>
         <option value="done">done</option>
       </select>
+
+      <input
+        type="datetime-local"
+        className="w-full rounded border p-2 text-white"
+        value={deadline}
+        onChange={(e) => setDeadline(e.target.value)}
+      />
 
       <div className="flex gap-2">
         <button

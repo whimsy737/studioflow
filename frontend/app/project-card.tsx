@@ -79,7 +79,7 @@ export default function ProjectCard({ project }: Props) {
           Created:
         </p>
 
-        <p className="mt-1 text-sm text-zinc-300">
+        <p className="mt-1 text-sm text-zinc-300" suppressHydrationWarning>
           {new Date(project.created_at).toLocaleString()}
         </p>
         
@@ -94,7 +94,7 @@ export default function ProjectCard({ project }: Props) {
             {deadlineStatus.label}
         </p>
 
-        <p className="mt-1 text-sm text-zinc-300">
+        <p className="mt-1 text-sm text-zinc-300" suppressHydrationWarning>
             {project.deadline
             ? new Date(project.deadline).toLocaleString()
             : "未設定"}
@@ -107,6 +107,7 @@ export default function ProjectCard({ project }: Props) {
           initialTitle={project.title}
           initialDescription={project.description}
           initialStatus={project.status}
+          initialDeadline={project.deadline}
         />
 
         <DeleteProjectButton

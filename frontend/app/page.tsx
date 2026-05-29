@@ -8,6 +8,8 @@ import EditProjectForm from "./edit-project-form";
 import StatusBadge from "./status-badge";
 
 import ProjectCard from "./project-card";
+import ProjectBoard from "./project-board";
+
 
 export default async function Home() {
   const projects = await fetchProjects();
@@ -91,90 +93,8 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="mt-10">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">
-              Projects
-            </h2>
+        <ProjectBoard projects={projects} />
 
-            <p className="text-sm text-zinc-500">
-              Active production tracking
-            </p>
-          </div>
-
-          {projects.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-dashed border-zinc-700 p-10 text-center text-zinc-500">
-              No projects yet.
-            </div>
-          ) : (
-            <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-
-              <div className="mt-6 grid w-full gap-6 lg:grid-cols-2 2xl:grid-cols-4">
-
-                <div>
-                  <h3 className="mb-4 text-lg font-bold text-zinc-400">
-                    TODO
-                  </h3>
-
-                  <div className="space-y-4">
-                    {todoProjects.map((project) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-lg font-bold text-blue-400">
-                    DOING
-                  </h3>
-
-                  <div className="space-y-4">
-                    {doingProjects.map((project) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-lg font-bold text-yellow-400">
-                    REVIEW
-                  </h3>
-
-                  <div className="space-y-4">
-                    {reviewProjects.map((project) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-lg font-bold text-green-400">
-                    DONE
-                  </h3>
-
-                  <div className="space-y-4">
-                    {doneProjects.map((project) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          )}
-        </section>
       </div>
     </main>
   );

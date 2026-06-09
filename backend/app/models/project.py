@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.db.base import Base
@@ -18,3 +19,9 @@ class Project(Base):
     deadline = Column(DateTime, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    comments = relationship(
+        "Comment",
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )

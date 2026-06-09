@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { fetchProject } from "@/lib/api";
+import { fetchComments, fetchProject } from "@/lib/api";
 import StatusBadge from "../../status-badge";
+import CommentForm from "./comment-form";
 
 type Props = {
   params: Promise<{
@@ -11,6 +12,7 @@ type Props = {
 export default async function ProjectDetailPage({ params }: Props) {
   const { id } = await params;
   const project = await fetchProject(Number(id));
+  const comments = await fetchComments(Number(id));
   
   const deadlineStatus = (() => {
     if (!project.deadline) {
@@ -88,6 +90,36 @@ export default async function ProjectDetailPage({ params }: Props) {
           </div>
         </dl>
       </section>
+
+      <section className="mt-6 rounded border p-6">
+        <h2 className="text-xl font-bold">Comments</h2>
+
+        <CommentForm projectId={project.id} />
+
+        <div className="mt-6 space-y-4">
+          {comments.length === 0 ? (
+            <p className="text-sm text-gray-500">
+              No comments yet.
+            </p>
+          ) : (
+            comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="rounded border border-zinc-800 bg-zinc-900 p-4"
+              >
+                <p className="text-zinc-200">
+                  {comment.content}
+                </p>
+
+                <p className="mt-2 text-xs text-zinc-500" suppressHydrationWarning>
+                  {new Date(comment.created_at).toLocaleString()}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
     </main>
   );
 }

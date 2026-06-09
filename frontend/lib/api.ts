@@ -93,3 +93,49 @@ export async function fetchProject(id: number): Promise<Project> {
 
   return response.json();
 }
+
+export type Comment = {
+  id: number;
+  project_id: number;
+  content: string;
+  created_at: string;
+};
+
+export async function fetchComments(projectId: number): Promise<Comment[]> {
+  const response = await fetch(
+    `${API_BASE_URL}/projects/${projectId}/comments`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch comments");
+  }
+
+  return response.json();
+}
+
+export async function createComment(
+  projectId: number,
+  data: {
+    content: string;
+  }
+) {
+  const response = await fetch(
+    `${API_BASE_URL}/projects/${projectId}/comments`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to create comment");
+  }
+
+  return response.json();
+}

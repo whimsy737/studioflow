@@ -31,3 +31,40 @@ def get_comments_by_project_id(
         .order_by(Comment.created_at.desc())
         .all()
     )
+
+def get_comment_by_id(
+    db: Session,
+    comment_id: int,
+) -> Comment | None:
+    return db.query(Comment).filter(Comment.id == comment_id).first()
+
+def update_comment(
+    db: Session,
+    comment_id: int,
+    comment_data: CommentCreate,
+) -> Comment | None:
+    comment = get_comment_by_id(db, comment_id)
+
+    if not comment:
+        return None
+
+    comment.content = comment_data.content
+
+    db.commit()
+    db.refresh(comment)
+
+    return comment
+
+def delete_comment(
+    db: Session,
+    comment_id: int,
+) -> bool:
+    comment = get_comment_by_id(db, comment_id)
+
+    if not comment:
+        return False
+
+    db.delete(comment)
+    db.commit()
+
+    return True

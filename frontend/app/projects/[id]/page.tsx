@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { fetchComments, fetchProject } from "@/lib/api";
+import { fetchComments, fetchProject, deleteComment, } from "@/lib/api";
 import StatusBadge from "../../status-badge";
 import CommentForm from "./comment-form";
+import CommentEditForm from "./comment-edit-form";
+import CommentDeleteButton from "./comment-delete-button";
 
 type Props = {
   params: Promise<{
@@ -114,6 +116,20 @@ export default async function ProjectDetailPage({ params }: Props) {
                 <p className="mt-2 text-xs text-zinc-500" suppressHydrationWarning>
                   {new Date(comment.created_at).toLocaleString()}
                 </p>
+
+                <div className="mt-3 flex gap-2">
+                  <CommentEditForm
+                    projectId={project.id}
+                    commentId={comment.id}
+                    initialContent={comment.content}
+                  />
+                  
+                  <CommentDeleteButton
+                    projectId={project.id}
+                    commentId={comment.id}
+                  />
+                </div>
+
               </div>
             ))
           )}

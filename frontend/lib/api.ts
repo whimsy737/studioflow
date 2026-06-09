@@ -139,3 +139,46 @@ export async function createComment(
 
   return response.json();
 }
+
+export async function updateComment(
+  projectId: number,
+  commentId: number,
+  data: {
+    content: string;
+  }
+) {
+  const response = await fetch(
+    `${API_BASE_URL}/projects/${projectId}/comments/${commentId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update comment");
+  }
+
+  return response.json();
+}
+
+export async function deleteComment(
+  projectId: number,
+  commentId: number
+) {
+  const response = await fetch(
+    `${API_BASE_URL}/projects/${projectId}/comments/${commentId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to delete comment");
+  }
+
+  return response.json();
+}

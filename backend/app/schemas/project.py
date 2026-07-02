@@ -11,6 +11,7 @@ class ProjectCreate(BaseModel):
 
 class ProjectResponse(BaseModel):
     id: int
+    owner_id: int | None = None
     title: str
     description: str | None
     status: str

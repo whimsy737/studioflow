@@ -1,3 +1,10 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import type { Project } from "@/lib/api";
+
+import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 
 import { fetchProjects } from "@/lib/api";
@@ -10,9 +17,45 @@ import StatusBadge from "./status-badge";
 import ProjectCard from "./project-card";
 import ProjectBoard from "./project-board";
 
+import AuthStatus from "./auth-status";
 
-export default async function Home() {
-  const projects = await fetchProjects();
+
+export default function Home() {
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProjects() {
+      const token = localStorage.getItem("access_token");
+
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      try {
+        const projects = await fetchProjects();
+        setProjects(projects);
+      } catch {
+        localStorage.removeItem("access_token");
+        router.push("/login");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadProjects();
+  }, [router]);
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-zinc-950 p-8 text-white">
+        Loading...
+      </main>
+    );
+  }
 
   const todoProjects = projects.filter(
     (project) => project.status === "todo"
@@ -62,6 +105,8 @@ export default async function Home() {
           </div>
 
           <div className="flex gap-3">
+            <AuthStatus />
+
             <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
               <p className="text-sm text-zinc-400">Total Projects</p>
               <p className="text-2xl font-bold">{projects.length}</p>

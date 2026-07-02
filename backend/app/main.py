@@ -4,6 +4,7 @@ from sqlalchemy import text
 
 from app.api.projects import router as projects_router
 from app.api.comments import router as comments_router
+from app.api.auth import router as auth_router
 from app.db.session import engine
 
 app = FastAPI()
@@ -22,6 +23,7 @@ app.add_middleware(
 
 app.include_router(projects_router, prefix="/api/v1")
 app.include_router(comments_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
 
 
 @app.get("/health")

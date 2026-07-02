@@ -8,6 +8,7 @@ from alembic import context
 from app.db.base import Base
 from app.models.project import Project
 from app.models.comment import Comment
+from app.models.user import User
 from app.db.session import settings
 
 # this is the Alembic Config object, which provides

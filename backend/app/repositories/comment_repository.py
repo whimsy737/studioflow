@@ -8,10 +8,12 @@ def create_comment(
     db: Session,
     project_id: int,
     comment_data: CommentCreate,
+    user_id: int,
 ) -> Comment:
     comment = Comment(
         project_id=project_id,
         content=comment_data.content,
+        user_id=user_id,
     )
 
     db.add(comment)
@@ -42,10 +44,14 @@ def update_comment(
     db: Session,
     comment_id: int,
     comment_data: CommentCreate,
+    current_user_id: int,
 ) -> Comment | None:
     comment = get_comment_by_id(db, comment_id)
 
     if not comment:
+        return None
+    
+    if comment.user_id != current_user_id:
         return None
 
     comment.content = comment_data.content
@@ -58,10 +64,14 @@ def update_comment(
 def delete_comment(
     db: Session,
     comment_id: int,
+    current_user_id: int,
 ) -> bool:
     comment = get_comment_by_id(db, comment_id)
 
     if not comment:
+        return False
+    
+    if comment.user_id != current_user_id:
         return False
 
     db.delete(comment)

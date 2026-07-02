@@ -10,8 +10,13 @@ export type Project = {
 };
 
 export async function fetchProjects(): Promise<Project[]> {
+  const token = localStorage.getItem("access_token");
+
   const response = await fetch(`${API_BASE_URL}/projects`, {
     cache: "no-store",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {
@@ -26,10 +31,13 @@ export async function createProject(data: {
   description: string;
   deadline: string | null;
 }) {
+  const token = localStorage.getItem("access_token");
+
   const response = await fetch(`${API_BASE_URL}/projects`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       ...data,
@@ -46,18 +54,6 @@ export async function createProject(data: {
   return response.json();
 }
 
-export async function deleteProject(id: number) {
-  const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to delete project");
-  }
-
-  return response.json();
-}
-
 export async function updateProject(
   id: number,
   data: {
@@ -67,16 +63,36 @@ export async function updateProject(
     deadline: string | null;
   }
 ) {
+  const token = localStorage.getItem("access_token");
+
   const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
 
   if (!response.ok) {
     throw new Error("Failed to update project");
+  }
+
+  return response.json();
+}
+
+export async function deleteProject(id: number) {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete project");
   }
 
   return response.json();
@@ -178,6 +194,67 @@ export async function deleteComment(
 
   if (!response.ok) {
     throw new Error("Failed to delete comment");
+  }
+
+  return response.json();
+}
+
+export async function login(data: {
+  email: string;
+  password: string;
+}) {
+  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to login");
+  }
+
+  return response.json();
+}
+
+export async function getCurrentUser() {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(
+    `${API_BASE_URL}/auth/me`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Unauthorized");
+  }
+
+  return response.json();
+}
+
+export async function register(data: {
+  username: string;
+  email: string;
+  password: string;
+}) {
+  const response = await fetch(
+    `${API_BASE_URL}/auth/register`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to register");
   }
 
   return response.json();

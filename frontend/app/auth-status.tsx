@@ -3,41 +3,46 @@
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "@/lib/api";
 
+import { useRouter } from "next/navigation";
+
 export default function AuthStatus() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
 
-useEffect(() => {
-  async function loadUser() {
-    const token = localStorage.getItem(
-      "access_token"
-    );
+  const router = useRouter();
 
-    if (!token) {
-      return;
-    }
-
-    try {
-      const user = await getCurrentUser();
-
-      setUsername(user.username);
-      setIsLoggedIn(true);
-    } catch {
-      localStorage.removeItem(
+  useEffect(() => {
+    async function loadUser() {
+      const token = localStorage.getItem(
         "access_token"
       );
 
-      setIsLoggedIn(false);
-    }
-  }
+      if (!token) {
+        return;
+      }
 
-  loadUser();
-}, []);
+      try {
+        const user = await getCurrentUser();
+
+        setUsername(user.username);
+        setIsLoggedIn(true);
+      } catch {
+        localStorage.removeItem(
+          "access_token"
+        );
+
+        setIsLoggedIn(false);
+      }
+    }
+
+    loadUser();
+  }, []);
 
   function handleLogout() {
     localStorage.removeItem("access_token");
+    setUsername("");
     setIsLoggedIn(false);
-    window.location.reload();
+    router.push("/login");
   }
 
   if (!isLoggedIn) {

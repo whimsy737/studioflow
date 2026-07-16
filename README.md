@@ -1,8 +1,6 @@
 # StudioFlow
 
-Production management system for creative teams.
-
-StudioFlow is a full-stack web application built with FastAPI, PostgreSQL, Docker, and Next.js.
+アニメ・映像制作会社での社内SE経験および現職での業務改善経験をもとに企画・開発している個人プロジェクトです。
 
 ## Tech Stack
 
